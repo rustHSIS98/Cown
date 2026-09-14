@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cown">
+
+<title>Cown — Count down. Simply.</title>
+
+<style>
+:root {
+    --bg: #f7f7f8;
+    --surface: #ffffff;
+    --surface-2: #f0f0f2;
+    --text: #111113;
+    --muted: #74747c;
+    --border: #e5e5e8;
+    --accent: #111113;
+    --danger: #e5484d;
+    --shadow: 0 8px 30px rgba(0,0,0,.06);
+}
+
+[data-theme="dark"] {
+    --bg: #0f0f10;
+    --surface: #18181a;
+    --surface-2: #232326;
+    --text: #f5f5f7;
+    --muted: #92929a;
+    --border: #2d2d31;
+    --accent: #f5f5f7;
+    --danger: #ff6369;
+    --shadow: 0 8px 30px rgba(0,0,0,.25);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        Inter,
+        system-ui,
+        sans-serif;
+    min-height: 100vh;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    color: inherit;
+}
+
+button:active {
+    transform: scale(.97);
+}
+
+/* ---------- STARTUP ---------- */
+
+#startup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity .45s ease, visibility .45s ease;
+}
+
+#startup.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.startup-inner {
+    text-align: center;
+    animation: startupPop .7s ease;
+}
+
+.startup-logo {
+    font-size: 58px;
+    font-weight: 800;
+    letter-spacing: -4px;
+}
+
+.startup-tagline {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+@keyframes startupPop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ---------- APP ---------- */
+
+.app {
+    width: min(100%, 780px);
+    margin: auto;
+    padding:
+        max(20px, env(safe-area-inset-top))
+        20px
+        calc(40px + env(safe-area-inset-bottom));
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 34px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    box-shadow: var(--shadow);
+}
+
+.hero {
+    margin-bottom: 32px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(30px, 7vw, 46px);
+    line-height: 1.02;
+    letter-spacing: -2px;
+}
+
+.hero p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* ---------- SECTIONS ---------- */
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 13px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.section-action {
+    color: var(--muted);
+    background: transparent;
+    font-size: 13px;
+}
+
+/* ---------- TEMPLATES ---------- */
+
+.templates {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+}
+
+.template {
+    min-height: 92px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 13px 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform .15s ease, border-color .15s ease;
+}
+
+.template:hover {
+    transform: translateY(-2px);
+    border-color: var(--muted);
+}
+
+.template-icon {
+    font-size: 27px;
+}
+
+.template-name {
+    font-size: 12px;
+    font-weight: 650;
+}
+
+/* ---------- SEARCH ---------- */
+
+.search-wrap {
+    position: relative;
+    margin-bottom: 13px;
+}
+
+.search {
+    width: 100%;
+    height: 45px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    padding: 0 15px 0 42px;
+    box-shadow: var(--shadow);
+}
+
+.search:focus {
+    border-color: var(--muted);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+}
+
+/* ---------- COUNTDOWNS ---------- */
+
+.countdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 21px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    animation: cardIn .3s ease;
+    transition:
+        transform .18s ease,
+        opacity .18s ease,
+        border-color .18s ease;
+}
+
+.card.dragging {
+    opacity: .45;
+    transform: scale(.985);
+}
+
+.card.drag-over {
+    border-color: var(--text);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.drag-handle {
+    color: var(--muted);
+    font-size: 17px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.card-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    background: var(--surface-2);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.card-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.card-name {
+    font-size: 16px;
+    font-weight: 750;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-date {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.small-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    font-size: 16px;
+}
+
+.small-btn.active {
+    color: #e3a600;
+}
+
+.countdown {
+    margin-top: 22px;
+    font-size: clamp(27px, 7vw, 39px);
+    font-weight: 800;
+    letter-spacing: -1.7px;
+    line-height: 1;
+}
+
+.countdown-format {
+    color: var(--muted);
+    margin-top: 9px;
+    font-size: 12px;
+}
+
+.expired {
+    color: var(--danger);
+}
+
+.expired-label {
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 9px;
+    font-weight: 650;
+}
+
+.recurring-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 5px;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    color: var(--muted);
+}
+
+/* ---------- EMPTY ---------- */
+
+.empty {
+    text-align: center;
+    padding: 50px 20px;
+    border: 1px dashed var(--border);
+    border-radius: 21px;
+}
+
+.empty-icon {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.empty-title {
+    font-weight: 750;
+}
+
+.empty-text {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+/* ---------- MODAL ---------- */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,.38);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility .2s ease;
+}
+
+.modal-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    width: min(100%, 570px);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    padding: 22px;
+    transform: translateY(30px);
+    transition: transform .25s ease;
+}
+
+.modal-backdrop.open .modal {
+    transform: translateY(0);
+}
+
+.modal-title {
+    font-size: 23px;
+    font-weight: 800;
+    margin-bottom: 22px;
+}
+
+.field {
+    margin-bottom: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 7px;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    height: 47px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    border-radius: 13px;
+    padding: 0 13px;
+    outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--muted);
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px;
+}
+
+.icon-picker {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+}
+
+.icon-choice {
+    aspect-ratio: 1;
+    border-radius: 11px;
+    background: var(--surface-2);
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+}
+
+.icon-choice.selected {
+    outline: 2px solid var(--text);
+    outline-offset: 1px;
+}
+
+.check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 43px;
+    padding: 0 2px;
+}
+
+.check-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--text);
+}
+
+.check-row span {
+    font-size: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 23px;
+}
+
+.modal-actions button {
+    flex: 1;
+    height: 48px;
+    border-radius: 14px;
+    font-weight: 700;
+}
+
+.cancel-btn {
+    background: var(--surface-2);
+}
+
+.save-btn {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+/* ---------- MENU ---------- */
+
+.context-menu {
+    position: fixed;
+    z-index: 1000;
+    width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.18);
+    padding: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.95);
+    transform-origin: top right;
+    transition: .12s ease;
+}
+
+.context-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.context-menu button {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    background: transparent;
+    text-align: left;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+.context-menu button:hover {
+    background: var(--surface-2);
+}
+
+.context-menu .danger {
+    color: var(--danger);
+}
+
+/* ---------- TOAST ---------- */
+
+.toast {
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    bottom: calc(22px + env(safe-area-inset-bottom));
+    transform: translate(-50%, 15px);
+    background: var(--text);
+    color: var(--bg);
+    padding: 11px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 650;
+    opacity: 0;
+    pointer-events: none;
+    transition: .22s ease;
+    white-space: nowrap;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* ---------- SETTINGS ---------- */
+
+.settings-section {
+    margin-top: 5px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.settings-btn {
+    width: 100%;
+    min-height: 46px;
+    background: var(--surface-2);
+    border-radius: 13px;
+    text-align: left;
+    padding: 0 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 520px) {
+    .templates {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .icon-picker {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .app {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (min-width: 700px) {
+    .modal-backdrop {
+        align-items: center;
+    }
+}
+
+/* ---------- ANIMATIONS ---------- */
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- STARTUP -->
+<div id="startup">
+    <div class="startup-inner">
+        <div class="startup-logo">Cown</div>
+        <div class="startup-tagline">Count down. Simply.</div>
+    </div>
+</div>
+
+<!-- APP -->
+<main class="app">
+
+    <header>
+        <div class="logo">Cown</div>
+
+        <div class="header-actions">
+            <button class="icon-btn" id="themeBtn" aria-label="Change theme">◐</button>
+            <button class="icon-btn" id="addBtn" aria-label="Add countdown">+</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>What are you counting down to?</h1>
+        <p>Create a countdown for anything that matters.</p>
+    </section>
+
+    <!-- QUICK START -->
+    <section class="section">
+        <div class="section-heading">
+            <div class="section-title">Quick start</div>
+        </div>
+
+        <div class="templates">
+            <button class="template" data-template="christmas">
+                <span class="template-icon">🎄</span>
+                <span class="template-name">Christmas</span>
+            </button>
+
+            <button class="template" data-template="newyear">
+                <span class="template-icon">🎆</span>
+                <span class="template-name">New Year</span>
+            </button>
+
+            <button class="template" data-template="halloween">
+                <span class="template-icon">🎃</span>
+                <span class="template-name">Halloween</span>
+            </button>
+
+            <button class="template" data-template="birthday">
+                <span class="template-icon">🎂</span>
+                <span class="template-name">Birthday</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- COUNTDOWNS -->
+    <section class="section">
+
+        <div class="section-heading">
+            <div class="section-title">Your countdowns</div>
+
+            <button class="section-action" id="manageBtn">
+                Manage
+            </button>
+        </div>
+
+        <div class="search-wrap" id="searchWrap" hidden>
+            <span class="search-icon">⌕</span>
+            <input
+                class="search"
+                id="searchInput"
+                type="search"
+                placeholder="Search countdowns..."
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="countdowns" id="countdowns"></div>
+
+        <div class="empty" id="empty">
+            <div class="empty-icon">◷</div>
+            <div class="empty-title">No countdowns yet</div>
+            <div class="empty-text">
+                Create one above or tap + to get started.
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+
+        <div class="modal-title" id="modalTitle">
+            New countdown
+        </div>
+
+        <div class="field">
+            <label for="nameInput">Name</label>
+            <input
+                id="nameInput"
+                type="text"
+                maxlength="80"
+                placeholder="What are you counting down to?"
+            >
+        </div>
+
+        <div class="two-col">
+
+            <div class="field">
+                <label for="dateInput">Date</label>
+                <input id="dateInput" type="date">
+            </div>
+
+            <div class="field">
+                <label for="timeInput">Time</label>
+                <input id="timeInput" type="time" value="00:00">
+            </div>
+
+        </div>
+
+        <div class="field">
+            <label>Icon</label>
+
+            <div class="icon-picker" id="iconPicker">
+                <button class="icon-choice selected">⏳</button>
+                <button class="icon-choice">🎯</button>
+                <button class="icon-choice">🎂</button>
+                <button class="icon-choice">🎄</button>
+                <button class="icon-choice">🎆</button>
+                <button class="icon-choice">🎃</button>
+                <button class="icon-choice">🎮</button>
+                <button class="icon-choice">🎓</button>
+                <button class="icon-choice">✈️</button>
+                <button class="icon-choice">🏖️</button>
+                <button class="icon-choice">💻</button>
+                <button class="icon-choice">❤️</button>
+                <button class="icon-choice">🏆</button>
+                <button class="icon-choice">🎁</button>
+                <button class="icon-choice">📅</button>
+                <button class="icon-choice">⭐</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="formatInput">Countdown format</label>
+
+            <select id="formatInput">
+                <option value="years-months-days">
+                    Years, months, days
+                </option>
+
+                <option value="months-days-hours">
+                    Months, days, hours
+                </option>
+
+                <option value="days-hours-minutes-seconds" selected>
+                    Days, hours, minutes, seconds
+                </option>
+
+                <option value="hours-minutes-seconds">
+                    Hours, minutes, seconds
+                </option>
+
+                <option value="minutes-seconds">
+                    Minutes, seconds
+                </option>
+
+                <option value="seconds">
+                    Seconds
+                </option>
+            </select>
+        </div>
+
+        <div class="field">
+            <div class="check-row">
+                <input id="recurringInput" type="checkbox">
+                <span>Repeat every year</span>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="check-row">
+                <input id="pinInput" type="checkbox">
+                <span>Pin to the top</span>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" id="cancelBtn">
+                Cancel
+            </button>
+
+            <button class="save-btn" id="saveBtn">
+                Save countdown
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="context-menu" id="contextMenu">
+    <button id="menuEdit">Edit</button>
+    <button id="menuDuplicate">Duplicate</button>
+    <button id="menuPin">Pin / unpin</button>
+    <button id="menuDelete" class="danger">Delete</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   COWN
+   ========================================================= */
+
+const STORAGE_KEY = "cown-countdowns-v2";
+const THEME_KEY = "cown-theme";
+
+let countdowns = [];
+let editingId = null;
+let selectedIcon = "⏳";
+let contextId = null;
+let dragId = null;
+let toastTimer = null;
+let manageMode = false;
+
+/* ---------- ELEMENTS ---------- */
+
+const startup = document.getElementById("startup");
+const countdownContainer = document.getElementById("countdowns");
+const empty = document.getElementById("empty");
+const modalBackdrop = document.getElementById("modalBackdrop");
+const modalTitle = document.getElementById("modalTitle");
+
+const nameInput = document.getElementById("nameInput");
+const dateInput = document.getElementById("dateInput");
+const timeInput = document.getElementById("timeInput");
+const formatInput = document.getElementById("formatInput");
+const recurringInput = document.getElementById("recurringInput");
+const pinInput = document.getElementById("pinInput");
+
+const themeBtn = document.getElementById("themeBtn");
+const searchWrap = document.getElementById("searchWrap");
+const searchInput = document.getElementById("searchInput");
+
+const contextMenu = document.getElementById("contextMenu");
+
+/* ---------- STARTUP ---------- */
+
+setTimeout(() => {
+    startup.classList.add("hidden");
+}, 1100);
+
+/* ---------- STORAGE ---------- */
+
+function loadCountdowns() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+            countdowns = [];
+            return;
+        }
+
+        const parsed = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+            countdowns = parsed.map(item => ({
+                id: item.id || crypto.randomUUID(),
+                name: item.name || "Untitled",
+                target: item.target,
+                icon: item.icon || "⏳",
+                format: item.format || "days-hours-minutes-seconds",
+                recurring: Boolean(item.recurring),
+                pinned: Boolean(item.pinned),
+                created: item.created || Date.now()
+            }));
+        }
+    } catch {
+        countdowns = [];
+    }
+}
+
+function saveCountdowns() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(countdowns));
+}
+
+/* ---------- THEME ---------- */
+
+function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+}
+
+function applyTheme() {
+    const saved = localStorage.getItem(THEME_KEY) || "system";
+
+    if (saved === "system") {
+        document.documentElement.removeAttribute("data-theme");
+    } else {
+        document.documentElement.dataset.theme = saved;
+    }
+
+    themeBtn.textContent =
+        saved === "dark" ? "☾" :
+        saved === "light" ? "☀" :
+        "◐";
+
+    const actualTheme =
+        saved === "system" ? getSystemTheme() : saved;
+
+    document
+        .querySelector('meta[name="theme-color"]')
+        .setAttribute(
+            "content",
+            actualTheme === "dark" ? "#0f0f10" : "#f7f7f8"
+        );
+}
+
+themeBtn.addEventListener("click", () => {
+    const current = localStorage.getItem(THEME_KEY) || "system";
+
+    const next =
+        current === "system" ? "dark" :
+        current === "dark" ? "light" :
+        "system";
+
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme();
+});
+
+/* ---------- DATE HELPERS ---------- */
+
+function dateFromInput() {
+    return new Date(
+        `${dateInput.value}T${timeInput.value || "00:00"}`
+    );
+}
+
+function pad(number) {
+    return String(number).padStart(2, "0");
+}
+
+function formatDate(date) {
+    return new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short"
+    }).format(date);
+}
+
+/*
+    Add years while keeping the date as close as possible.
+
+    Example:
+    February 29, 2028 + 1 year
+    becomes February 28, 2029 instead of rolling into March.
+*/
+function addYear(date) {
+    const next = new Date(date);
+
+    const originalMonth = next.getMonth();
+    const originalDay = next.getDate();
+
+    next.setDate(1);
+    next.setFullYear(next.getFullYear() + 1);
+    next.setMonth(originalMonth);
+
+    const lastDay =
+        new Date(
+            next.getFullYear(),
+            originalMonth + 1,
+            0
+        ).getDate();
+
+    next.setDate(Math.min(originalDay, lastDay));
+
+    return next;
+}
+
+/*
+    Add months without JavaScript's annoying date rollover.
+
+    Example:
+    January 31 + 1 month
+    becomes February 28/29,
+    rather than March 2/3.
+*/
+function addMonthsClamped(date, months) {
+    const next = new Date(date);
+
+    const originalDay = next.getDate();
+
+    next.setDate(1);
+    next.setMonth(next.getMonth() + months);
+
+    const lastDay =
+        new Date(
+            next.getFullYear(),
+            next.getMonth() + 1,
+            0
+        ).getDate();
+
+    next.setDate(Math.min(originalDay, lastDay));
+
+    return next;
+}
+
+function normalizeRecurring(item) {
+    if (!item.recurring) return;
+
+    const target = new Date(item.target);
+
+    if (Number.isNaN(target.getTime())) return;
+
+    const now = new Date();
+
+    while (target <= now) {
+        const next = addYear(target);
+
+        target.setTime(next.getTime());
+    }
+
+    item.target = target.toISOString();
+}
+
+/* ---------- CALENDAR DIFFERENCE ---------- */
+
+function calendarDifference(from, to) {
+    const start = new Date(from);
+    const end = new Date(to);
+
+    if (
+        Number.isNaN(start.getTime()) ||
+        Number.isNaN(end.getTime()) ||
+        end <= start
+    ) {
+        return {
+            years: 0,
+            months: 0,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            totalSeconds: 0
+        };
+    }
+
+    let cursor = new Date(start);
+
+    let years = end.getFullYear() - cursor.getFullYear();
+
+    if (years > 0) {
+        const candidate = new Date(cursor);
+
+        candidate.setDate(1);
+        candidate.setFullYear(
+            candidate.getFullYear() + years
+        );
+
+        const originalDay = cursor.getDate();
+
+        const lastDay =
+            new Date(
+                candidate.getFullYear(),
+                candidate.getMonth() + 1,
+                0
+            ).getDate();
+
+        candidate.setDate(
+            Math.min(originalDay, lastDay)
+        );
+
+        if (candidate > end) {
+            years--;
+        } else {
+            cursor = candidate;
+        }
+    }
+
+    let months =
+        (end.getFullYear() - cursor.getFullYear()) * 12 +
+        (end.getMonth() - cursor.getMonth());
+
+    if (months > 0) {
+        const candidate =
+            addMonthsClamped(cursor, months);
+
+        if (candidate > end) {
+            months--;
+        } else {
+            cursor = candidate;
+        }
+    }
+
+    let days = 0;
+
+    /*
+        Count complete calendar days instead of dividing
+        milliseconds by 86,400,000.
+
+        This avoids daylight-saving-time bugs where a day
+        can be 23 or 25 hours long.
+    */
+    while (true) {
+        const candidate = new Date(cursor);
+        candidate.setDate(candidate.getDate() + 1);
+
+        if (candidate > end) {
+            break;
+        }
+
+        cursor = candidate;
+        days++;
+    }
+
+    const remainingMs =
+        Math.max(0, end.getTime() - cursor.getTime());
+
+    const hours =
+        Math.floor(remainingMs / 3600000);
+
+    const afterHours =
+        remainingMs - hours * 3600000;
+
+    const minutes =
+        Math.floor(afterHours / 60000);
+
+    const afterMinutes =
+        afterHours - minutes * 60000;
+
+    const seconds =
+        Math.floor(afterMinutes / 1000);
+
+    const totalSeconds =
+        Math.floor(
+            (end.getTime() - start.getTime()) / 1000
+        );
+
+    return {
+        years,
+        months,
+        days,
+        hours,
+        minutes,
+        seconds,
+        totalSeconds
+    };
+}
+
+/* ---------- COUNTDOWN TEXT ---------- */
+
+function countdownText(target, format) {
+    const now = new Date();
+
+    if (target <= now) {
+        return "0";
+    }
+
+    /*
+        Formats based on exact elapsed time.
+
+        This is deliberately separate from calendarDifference().
+        A countdown like:
+
+        September 14 → December 25
+
+        must be around:
+
+        102d ...
+
+        NOT:
+
+        11d ...
+
+        Calendar differences are only appropriate when the user
+        specifically asks for years/months-based formatting.
+    */
+    const totalSeconds =
+        Math.max(
+            0,
+            Math.floor(
+                (target.getTime() - now.getTime()) / 1000
+            )
+        );
+
+    switch (format) {
+
+        case "years-months-days": {
+            const difference =
+                calendarDifference(now, target);
+
+            return `${difference.years}y ${difference.months}mo ${difference.days}d`;
+        }
+
+        case "months-days-hours": {
+            const difference =
+                calendarDifference(now, target);
+
+            const totalMonths =
+                difference.years * 12 +
+                difference.months;
+
+            return `${totalMonths}mo ${difference.days}d ${difference.hours}h`;
+        }
+
+        case "days-hours-minutes-seconds": {
+            const days =
+                Math.floor(totalSeconds / 86400);
+
+            const hours =
+                Math.floor(
+                    (totalSeconds % 86400) / 3600
+                );
+
+            const minutes =
+                Math.floor(
+                    (totalSeconds % 3600) / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+            return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+        }
+
+        case "hours-minutes-seconds": {
+            const hours =
+                Math.floor(totalSeconds / 3600);
+
+            const minutes =
+                Math.floor(
+                    (totalSeconds % 3600) / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+            return `${hours}h ${pad(minutes)}m ${pad(seconds)}s`;
+        }
+
+        case "minutes-seconds": {
+            const minutes =
+                Math.floor(totalSeconds / 60);
+
+            const seconds =
+                totalSeconds % 60;
+
+            return `${minutes}m ${pad(seconds)}s`;
+        }
+
+        case "seconds":
+            return `${totalSeconds.toLocaleString()} seconds`;
+
+        default: {
+            const days =
+                Math.floor(totalSeconds / 86400);
+
+            const hours =
+                Math.floor(
+                    (totalSeconds % 86400) / 3600
+                );
+
+            const minutes =
+                Math.floor(
+                    (totalSeconds % 3600) / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+            return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+        }
+    }
+}
+
+function formatName(format) {
+    const names = {
+        "years-months-days": "Years, months, days",
+        "months-days-hours": "Months, days, hours",
+        "days-hours-minutes-seconds":
+            "Days, hours, minutes, seconds",
+        "hours-minutes-seconds":
+            "Hours, minutes, seconds",
+        "minutes-seconds":
+            "Minutes, seconds",
+        "seconds":
+            "Seconds"
+    };
+
+    return names[format] ||
+        names["days-hours-minutes-seconds"];
+}
+
+/* ---------- SORTING ---------- */
+
+function sortedCountdowns() {
+    return [...countdowns].sort((a, b) => {
+
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+
+        return (a.order ?? a.created) -
+               (b.order ?? b.created);
+    });
+}
+
+/* ---------- RENDER ---------- */
+
+function render() {
+
+    const searchTerm =
+        searchInput.value.trim().toLowerCase();
+
+    const items =
+        sortedCountdowns().filter(item => {
+
+            if (!searchTerm) return true;
+
+            return item.name
+                .toLowerCase()
+                .includes(searchTerm);
+        });
+
+    countdownContainer.innerHTML = "";
+
+    if (items.length === 0) {
+        empty.hidden = false;
+
+        if (countdowns.length > 0 && searchTerm) {
+            empty.querySelector(".empty-title").textContent =
+                "No matches";
+
+            empty.querySelector(".empty-text").textContent =
+                "Try a different search.";
+        } else {
+            empty.querySelector(".empty-title").textContent =
+                "No countdowns yet";
+
+            empty.querySelector(".empty-text").textContent =
+                "Create one above or tap + to get started.";
+        }
+
+        return;
+    }
+
+    empty.hidden = true;
+
+    items.forEach(item => {
+        normalizeRecurring(item);
+        countdownContainer.appendChild(
+            createCard(item)
+        );
+    });
+
+    saveCountdowns();
+}
+
+/* ---------- CARD ---------- */
+
+function createCard(item) {
+
+    const card =
+        document.createElement("article");
+
+    card.className = "card";
+    card.draggable = manageMode;
+    card.dataset.id = item.id;
+
+    const target = new Date(item.target);
+    const expired = target <= new Date();
+
+    card.innerHTML = `
+        <div class="card-top">
+
+            ${
+                manageMode
+                ? `<div class="drag-handle" title="Drag to reorder">⠿</div>`
+                : ""
+            }
+
+            <div class="card-icon">
+                ${escapeHtml(item.icon)}
+            </div>
+
+            <div class="card-info">
+                <div class="card-name">
+                    ${escapeHtml(item.name)}
+
+                    ${
+                        item.recurring
+                        ? `<span class="recurring-badge">↻ yearly</span>`
+                        : ""
+                    }
+                </div>
+
+                <div class="card-date">
+                    ${escapeHtml(formatDate(target))}
+                </div>
+            </div>
+
+            <div class="card-actions">
+
+                <button
+                    class="small-btn pin-btn ${item.pinned ? "active" : ""}"
+                    data-action="pin"
+                    title="Pin"
+                >
+                    ${item.pinned ? "★" : "☆"}
+                </button>
+
+                <button
+                    class="small-btn"
+                    data-action="menu"
+                    title="More"
+                >
+                    ⋯
+                </button>
+
+            </div>
+        </div>
+
+        <div class="countdown ${expired ? "expired" : ""}">
+            ${
+                expired
+                ? "Time's up"
+                : countdownText(target, item.format)
+            }
+        </div>
+
+        ${
+            expired
+            ? `<div class="expired-label">
+                    ${item.recurring ? "Repeats next year" : "Countdown complete"}
+               </div>`
+            : `<div class="countdown-format">
+                    ${formatName(item.format)}
+               </div>`
+        }
+    `;
+
+    card.addEventListener("dragstart", () => {
+        dragId = item.id;
+        card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+        dragId = null;
+        card.classList.remove("dragging");
+
+        document
+            .querySelectorAll(".drag-over")
+            .forEach(el =>
+                el.classList.remove("drag-over")
+            );
+    });
+
+    card.addEventListener("dragover", event => {
+        if (!manageMode || !dragId || dragId === item.id) {
+            return;
+        }
+
+        event.preventDefault();
+        card.classList.add("drag-over");
+    });
+
+    card.addEventListener("dragleave", () => {
+        card.classList.remove("drag-over");
+    });
+
+    card.addEventListener("drop", event => {
+        event.preventDefault();
+
+        if (!dragId || dragId === item.id) return;
+
+        reorderCountdown(dragId, item.id);
+        card.classList.remove("drag-over");
+    });
+
+    card.querySelector('[data-action="pin"]')
+        .addEventListener("click", event => {
+            event.stopPropagation();
+            togglePin(item.id);
+        });
+
+    card.querySelector('[data-action="menu"]')
+        .addEventListener("click", event => {
+            event.stopPropagation();
+            openContextMenu(
+                item.id,
+                event.currentTarget
+            );
+        });
+
+    return card;
+}
+
+/* ---------- ESCAPE HTML ---------- */
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+/* ---------- MODAL ---------- */
+
+function openModal(item = null) {
+
+    editingId = item ? item.id : null;
+
+    modalTitle.textContent =
+        item ? "Edit countdown" : "New countdown";
+
+    nameInput.value = item?.name || "";
+    selectedIcon = item?.icon || "⏳";
+
+    if (item) {
+        const target =
+            new Date(item.target);
+
+        dateInput.value =
+            `${target.getFullYear()}-${pad(target.getMonth() + 1)}-${pad(target.getDate())}`;
+
+        timeInput.value =
+            `${pad(target.getHours())}:${pad(target.getMinutes())}`;
+    } else {
+        const tomorrow = new Date();
+
+        tomorrow.setDate(
+            tomorrow.getDate() + 1
+        );
+
+        dateInput.value =
+            `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`;
+
+        timeInput.value = "00:00";
+    }
+
+    formatInput.value =
+        item?.format ||
+        "days-hours-minutes-seconds";
+
+    recurringInput.checked =
+        Boolean(item?.recurring);
+
+    pinInput.checked =
+        Boolean(item?.pinned);
+
+    document
+        .querySelectorAll(".icon-choice")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "selected",
+                button.textContent.trim() === selectedIcon
+            );
+        });
+
+    modalBackdrop.classList.add("open");
+
+    setTimeout(() => nameInput.focus(), 100);
+}
+
+function closeModal() {
+    modalBackdrop.classList.remove("open");
+    editingId = null;
+}
+
+/* ---------- BUTTONS ---------- */
+
+document.getElementById("addBtn")
+    .addEventListener("click", () => openModal());
+
+document.getElementById("cancelBtn")
+    .addEventListener("click", closeModal);
+
+modalBackdrop.addEventListener("click", event => {
+    if (event.target === modalBackdrop) {
+        closeModal();
+    }
+});
+
+document.getElementById("saveBtn")
+    .addEventListener("click", saveCountdown);
+
+/* ---------- ICON PICKER ---------- */
+
+document
+    .querySelectorAll(".icon-choice")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            document
+                .querySelectorAll(".icon-choice")
+                .forEach(other =>
+                    other.classList.remove("selected")
+                );
+
+            button.classList.add("selected");
+            selectedIcon =
+                button.textContent.trim();
+        });
+    });
+
+/* ---------- SAVE ---------- */
+
+function saveCountdown() {
+
+    const name =
+        nameInput.value.trim();
+
+    const target =
+        dateFromInput();
+
+    if (!name) {
+        showToast("Give your countdown a name.");
+        nameInput.focus();
+        return;
+    }
+
+    if (Number.isNaN(target.getTime())) {
+        showToast("Choose a valid date.");
+        return;
+    }
+
+    const data = {
+        name,
+        target: target.toISOString(),
+        icon: selectedIcon,
+        format: formatInput.value,
+        recurring: recurringInput.checked,
+        pinned: pinInput.checked
+    };
+
+    if (editingId) {
+
+        const index =
+            countdowns.findIndex(
+                item => item.id === editingId
+            );
+
+        if (index !== -1) {
+            countdowns[index] = {
+                ...countdowns[index],
+                ...data
+            };
+        }
+
+        showToast("Countdown updated.");
+
+    } else {
+
+        countdowns.push({
+            id: crypto.randomUUID(),
+            ...data,
+            created: Date.now(),
+            order: Date.now()
+        });
+
+        showToast("Countdown created.");
+    }
+
+    saveCountdowns();
+    closeModal();
+    render();
+}
+
+/* ---------- TEMPLATES ---------- */
+
+function nextDate(month, day) {
+
+    const now = new Date();
+
+    let date =
+        new Date(
+            now.getFullYear(),
+            month,
+            day,
+            0,
+            0,
+            0
+        );
+
+    if (date <= now) {
+        date =
+            new Date(
+                now.getFullYear() + 1,
+                month,
+                day,
+                0,
+                0,
+                0
+            );
+    }
+
+    return date;
+}
+
+document
+    .querySelectorAll(".template")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const type =
+                button.dataset.template;
+
+            if (type === "birthday") {
+                openModal();
+
+                nameInput.value = "Birthday";
+                selectedIcon = "🎂";
+                recurringInput.checked = true;
+                pinInput.checked = false;
+
+                document
+                    .querySelectorAll(".icon-choice")
+                    .forEach(icon => {
+                        icon.classList.toggle(
+                            "selected",
+                            icon.textContent.trim() === "🎂"
+                        );
+                    });
+
+                return;
+            }
+
+            const data = {
+                christmas: {
+                    name: "Christmas",
+                    month: 11,
+                    day: 25,
+                    icon: "🎄"
+                },
+
+                newyear: {
+                    name: "New Year",
+                    month: 0,
+                    day: 1,
+                    icon: "🎆"
+                },
+
+                halloween: {
+                    name: "Halloween",
+                    month: 9,
+                    day: 31,
+                    icon: "🎃"
+                }
+            }[type];
+
+            const target =
+                nextDate(
+                    data.month,
+                    data.day
+                );
+
+            countdowns.push({
+                id: crypto.randomUUID(),
+                name: data.name,
+                target: target.toISOString(),
+                icon: data.icon,
+                format:
+                    "days-hours-minutes-seconds",
+                recurring: true,
+                pinned: false,
+                created: Date.now(),
+                order: Date.now()
+            });
+
+            saveCountdowns();
+            render();
+
+            showToast(
+                `${data.name} added.`
+            );
+        });
+    });
+
+/* ---------- PIN ---------- */
+
+function togglePin(id) {
+
+    const item =
+        countdowns.find(
+            item => item.id === id
+        );
+
+    if (!item) return;
+
+    item.pinned = !item.pinned;
+
+    saveCountdowns();
+    render();
+
+    showToast(
+        item.pinned
+            ? "Pinned to the top."
+            : "Unpinned."
+    );
+}
+
+/* ---------- CONTEXT MENU ---------- */
+
+function openContextMenu(id, button) {
+
+    contextId = id;
+
+    const rect =
+        button.getBoundingClientRect();
+
+    contextMenu.style.left =
+        `${Math.min(
+            window.innerWidth - 190,
+            Math.max(10, rect.right - 180)
+        )}px`;
+
+    contextMenu.style.top =
+        `${Math.min(
+            window.innerHeight - 180,
+            rect.bottom + 7
+        )}px`;
+
+    const item =
+        countdowns.find(
+            item => item.id === id
+        );
+
+    document.getElementById("menuPin")
+        .textContent =
+            item?.pinned ? "Unpin" : "Pin";
+
+    contextMenu.classList.add("open");
+}
+
+function closeContextMenu() {
+    contextMenu.classList.remove("open");
+    contextId = null;
+}
+
+document.addEventListener("click", event => {
+
+    if (
+        !contextMenu.contains(event.target) &&
+        !event.target.closest(
+            '[data-action="menu"]'
+        )
+    ) {
+        closeContextMenu();
+    }
+});
+
+document.getElementById("menuEdit")
+    .addEventListener("click", () => {
+
+        const item =
+            countdowns.find(
+                item => item.id === contextId
+            );
+
+        closeContextMenu();
+
+        if (item) openModal(item);
+    });
+
+document.getElementById("menuDelete")
+    .addEventListener("click", () => {
+
+        const id = contextId;
+
+        closeContextMenu();
+
+        const item =
+            countdowns.find(
+                item => item.id === id
+            );
+
+        if (!item) return;
+
+        if (!confirm(
+            `Delete "${item.name}"?`
+        )) {
+            return;
+        }
+
+        countdowns =
+            countdowns.filter(
+                item => item.id !== id
+            );
+
+        saveCountdowns();
+        render();
+
+        showToast("Countdown deleted.");
+    });
+
+document.getElementById("menuPin")
+    .addEventListener("click", () => {
+
+        const id = contextId;
+
+        closeContextMenu();
+
+        if (id) togglePin(id);
+    });
+
+document.getElementById("menuDuplicate")
+    .addEventListener("click", () => {
+
+        const item =
+            countdowns.find(
+                item => item.id === contextId
+            );
+
+        closeContextMenu();
+
+        if (!item) return;
+
+        const duplicate = {
+            ...item,
+            id: crypto.randomUUID(),
+            name: `${item.name} Copy`,
+            pinned: false,
+            created: Date.now(),
+            order: Date.now()
+        };
+
+        countdowns.push(duplicate);
+
+        saveCountdowns();
+        render();
+
+        showToast("Countdown duplicated.");
+    });
+
+/* ---------- REORDER ---------- */
+
+function reorderCountdown(
+    draggedId,
+    targetId
+) {
+
+    const dragged =
+        countdowns.find(
+            item => item.id === draggedId
+        );
+
+    const target =
+        countdowns.find(
+            item => item.id === targetId
+        );
+
+    if (!dragged || !target) return;
+
+    const draggedOrder =
+        dragged.order ?? dragged.created;
+
+    const targetOrder =
+        target.order ?? target.created;
+
+    if (draggedOrder === targetOrder) return;
+
+    const sorted =
+        sortedCountdowns();
+
+    const fromIndex =
+        sorted.findIndex(
+            item => item.id === draggedId
+        );
+
+    const toIndex =
+        sorted.findIndex(
+            item => item.id === targetId
+        );
+
+    if (fromIndex === -1 || toIndex === -1) {
+        return;
+    }
+
+    sorted.splice(fromIndex, 1);
+    sorted.splice(toIndex, 0, dragged);
+
+    sorted.forEach((item, index) => {
+        item.order = index;
+    });
+
+    saveCountdowns();
+    render();
+}
+
+/* ---------- MANAGE ---------- */
+
+document.getElementById("manageBtn")
+    .addEventListener("click", () => {
+
+        manageMode = !manageMode;
+
+        document.getElementById("manageBtn")
+            .textContent =
+                manageMode ? "Done" : "Manage";
+
+        searchWrap.hidden = !manageMode;
+
+        if (!manageMode) {
+            searchInput.value = "";
+        }
+
+        render();
+    });
+
+searchInput.addEventListener(
+    "input",
+    render
+);
+
+/* ---------- EXPORT ---------- */
+
+function exportData() {
+
+    const backup = {
+        app: "Cown",
+        version: 1,
+        exportedAt:
+            new Date().toISOString(),
+        countdowns
+    };
+
+    const blob = new Blob(
+        [JSON.stringify(
+            backup,
+            null,
+            2
+        )],
+        {
+            type: "application/json"
+        }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        `cown-backup-${new Date()
+            .toISOString()
+            .slice(0, 10)}.json`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    showToast("Backup exported.");
+}
+
+/* ---------- IMPORT ---------- */
+
+function importData() {
+
+    const input =
+        document.createElement("input");
+
+    input.type = "file";
+    input.accept =
+        ".json,application/json";
+
+    input.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                input.files?.[0];
+
+            if (!file) return;
+
+            const reader =
+                new FileReader();
+
+            reader.onload = () => {
+
+                try {
+
+                    const parsed =
+                        JSON.parse(
+                            reader.result
+                        );
+
+                    const imported =
+                        Array.isArray(parsed)
+                        ? parsed
+                        : parsed.countdowns;
+
+                    if (!Array.isArray(imported)) {
+                        throw new Error();
+                    }
+
+                    const cleaned =
+                        imported.map(item => ({
+                            id: crypto.randomUUID(),
+                            name:
+                                String(
+                                    item.name ||
+                                    "Imported countdown"
+                                ),
+                            target: item.target,
+                            icon:
+                                item.icon ||
+                                "⏳",
+                            format:
+                                item.format ||
+                                "days-hours-minutes-seconds",
+                            recurring:
+                                Boolean(item.recurring),
+                            pinned:
+                                Boolean(item.pinned),
+                            created: Date.now(),
+                            order:
+                                Date.now() +
+                                Math.random()
+                        }));
+
+                    countdowns.push(...cleaned);
+
+                    saveCountdowns();
+                    render();
+
+                    showToast(
+                        `${cleaned.length} countdown${cleaned.length === 1 ? "" : "s"} imported.`
+                    );
+
+                } catch {
+                    showToast(
+                        "That backup file isn't valid."
+                    );
+                }
+            };
+
+            reader.readAsText(file);
+        }
+    );
+
+    input.click();
+}
+
+/* ---------- SETTINGS VIA KEYBOARD ---------- */
+
+/*
+   Ctrl/Cmd + Shift + E = export
+   Ctrl/Cmd + Shift + I = import
+*/
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const modifier =
+            event.ctrlKey ||
+            event.metaKey;
+
+        if (!modifier || !event.shiftKey) {
+            return;
+        }
+
+        if (
+            event.key.toLowerCase() === "e"
+        ) {
+            event.preventDefault();
+            exportData();
+        }
+
+        if (
+            event.key.toLowerCase() === "i"
+        ) {
+            event.preventDefault();
+            importData();
+        }
+    }
+);
+
+/* ---------- TOAST ---------- */
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2200);
+}
+
+/* ---------- UPDATE ---------- */
+
+setInterval(() => {
+    render();
+}, 1000);
+
+/* ---------- SYSTEM THEME ---------- */
+
+window
+    .matchMedia(
+        "(prefers-color-scheme: dark)"
+    )
+    .addEventListener(
+        "change",
+        () => {
+
+            const saved =
+                localStorage.getItem(
+                    THEME_KEY
+                ) || "system";
+
+            if (saved === "system") {
+                applyTheme();
+            }
+        }
+    );
+
+/* ---------- SERVICE WORKER ---------- */
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register("./sw.js")
+                .then(() => {
+                    console.log(
+                        "Cown service worker registered."
+                    );
+                })
+                .catch(error => {
+                    console.error(
+                        "Cown service worker registration failed:",
+                        error
+                    );
+                });
+        }
+    );
+}
+
+/* ---------- INITIALIZE ---------- */
+
+loadCountdowns();
+applyTheme();
+render();
+</script>
+
+</body>
+</html>
